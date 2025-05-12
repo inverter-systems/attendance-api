@@ -13,7 +13,7 @@ import com.inverter.auth.service.MessageService;
 import com.inverter.auth.service.UserService;
 
 @Controller
-@RequestMapping("api/auth/user")
+@RequestMapping("api/auth/reset")
 public class ResetPasswordController {
 	
 	private UserService service;

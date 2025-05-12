@@ -38,8 +38,13 @@ public class FilterToken extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 	        throws ServletException, IOException {
+		
+		if (req.getRequestURI().equals("/api/auth")) {
+			chain.doFilter(req, res);
+			return;
+		}
 
-	    final String ERROR_LABEL_ATTRIBUTE = "error";
+		final String ERROR_LABEL_ATTRIBUTE = "error";
 	    final String TOKEN_EXPIRED_ERROR_MSG = msg.get("user.auth.token.error.expired");
 	    final String TOKEN_DECODE_ERROR_MSG = msg.get("user.auth.token.error.decode");
 	    final String TOKEN_SIGNATUE_ERROR_MSG = msg.get("user.auth.token.error.signature");

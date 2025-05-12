@@ -8,7 +8,6 @@
 		<groupId>com.inverter</groupId>
 		<artifactId>attendance-api</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../</relativePath>
 	</parent>
 
 	<artifactId>web</artifactId>
@@ -62,7 +61,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>4.2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

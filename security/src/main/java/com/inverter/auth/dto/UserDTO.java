@@ -7,14 +7,18 @@ import com.inverter.auth.entity.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDTO {
 
 	private Long id;

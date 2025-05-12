@@ -59,7 +59,7 @@ public class EmailServiceImpl implements EmailService {
             var validFor = msg.get("template.email.activation.account.text.valid.link", new Object[]{expirationActivation, getLabelTime(expirationActivation)});
             context.setVariable("validFor", validFor);
             
-            String content = templateEngine.process("activation-email", context);
+            String content = templateEngine.process("/email/activation-email", context);
             helper.setText(content, true);
             
             mailSender.send(message);
