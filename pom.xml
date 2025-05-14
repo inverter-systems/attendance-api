@@ -21,7 +21,7 @@
 		<maven-compiler-version>3.13.0</maven-compiler-version>
 		<spring-boot.version>3.4.5</spring-boot.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
 	<dependencyManagement>
@@ -52,6 +52,9 @@
 					<configuration>
 						<source>${java.version}</source>
 						<target>${java.version}</target>
+						<compilerArgs>
+							<arg>-parameters</arg>
+						</compilerArgs>
 						<annotationProcessorPaths>
 							<path>
 								<groupId>org.projectlombok</groupId>

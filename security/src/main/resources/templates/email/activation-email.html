@@ -27,7 +27,7 @@
     <p>
         <a class="activate-button"  th:href="${activationLink}" th:text="#{template.email.activation.account.text.button}"></a>
     </p>
-    <p th:text="#{template.email.activation.account.text.valid.link}"></p>
+    <p th:text="${validFor}"></p>
     <p th:text="#{template.email.activation.account.text.ignore.email}"></p>
     <p th:text="#{template.email.text.yours.sincerely}"></p>
 	<p th:text="#{template.email.text.team}"></p>

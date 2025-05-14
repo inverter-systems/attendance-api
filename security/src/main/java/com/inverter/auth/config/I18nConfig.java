@@ -33,7 +33,7 @@ public class I18nConfig implements WebMvcConfigurer {
     @Bean
     MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasenames("i18n/messages");
+        messageSource.setBasenames("i18n/messages-security");
         messageSource.setDefaultEncoding("ISO-8859-1");
         
         // Recarregar mensagens em ambiente de desenvolvimento

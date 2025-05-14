@@ -1,7 +1,7 @@
 package com.inverter.auth.service.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -38,6 +38,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Value("${zone.off.set}")
 	private String zoneOffSet;
+	
+	static final String EXPIRED_ERROR_TOKEN_MSG = "user.auth.token.error.expired"; 
+	static final String DECODED_ERROR_TOKEN_MSG = "user.auth.token.error.decode"; 
+	static final String SIGNATURE_ERROR_TOKEN_MSG = "user.auth.token.error.signature";
 
 	public UserServiceImpl(UserRepository repo, TokenService tokenService,
 			EmailService emailService, MessageService msg,
@@ -78,7 +82,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User activationAcount(String token) throws SecurityException {
 		try {
 			var expirationToken = tokenService.getExpires(token, IssueEnum.ISSUE_ACTIVATION);
-			if (expirationToken.isBefore(LocalDateTime.now().toInstant(ZoneOffset.of(zoneOffSet)))) {
+			if (expirationToken.isBefore(ZonedDateTime.now(ZoneId.of(zoneOffSet)).toInstant())) {
 				throw new SecurityException(msg.get("user.auth.token.ativacao.expired.error"));
 			}
 	
@@ -91,11 +95,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 			return user;
 		} catch (TokenExpiredException e) {
-			throw new SecurityException(msg.get("user.auth.token.error.expired"));	
+			throw new SecurityException(msg.get(EXPIRED_ERROR_TOKEN_MSG));	
 		} catch (JWTDecodeException e) {
-			throw new SecurityException(msg.get("user.auth.token.error.decode"));
+			throw new SecurityException(msg.get(DECODED_ERROR_TOKEN_MSG));
 	    } catch (SignatureVerificationException e) {
-	    	throw new SecurityException(msg.get("user.auth.token.error.signature"));
+	    	throw new SecurityException(msg.get(SIGNATURE_ERROR_TOKEN_MSG));
 	    } catch (Exception e) {
 			throw new SecurityException(
 					msg.get("user.auth.token.ativacao.generic.error", new Object[] { e.getMessage() }));
@@ -124,8 +128,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User resetPassword(String token, String newPassword) throws SecurityException {
 		try {
 			var expirationToken = tokenService.getExpires(token, IssueEnum.ISSUE_RESET_PASSWORD);
-			if (expirationToken.isBefore(LocalDateTime.now().toInstant(ZoneOffset.of(zoneOffSet)))) {
-				throw new SecurityException(msg.get("user.auth.token.error.expired"));
+			if (expirationToken.isBefore(ZonedDateTime.now(ZoneId.of(zoneOffSet)).toInstant())) {
+				throw new SecurityException(msg.get(EXPIRED_ERROR_TOKEN_MSG));
 			}
 		
 			var subject = tokenService.getSubject(token, IssueEnum.ISSUE_RESET_PASSWORD);
@@ -137,11 +141,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 			return user;
 		} catch (TokenExpiredException e) {
-			throw new SecurityException(msg.get("user.auth.token.error.expired"));	
+			throw new SecurityException(msg.get(EXPIRED_ERROR_TOKEN_MSG));	
 		} catch (JWTDecodeException e) {
-			throw new SecurityException(msg.get("user.auth.token.error.decode"));
+			throw new SecurityException(msg.get(DECODED_ERROR_TOKEN_MSG));
 	    } catch (SignatureVerificationException e) {
-	    	throw new SecurityException(msg.get("user.auth.token.error.signature"));
+	    	throw new SecurityException(msg.get(SIGNATURE_ERROR_TOKEN_MSG));
 	    } catch (Exception e) {
 	    	throw new SecurityException(
 					msg.get("user.auth.email.reset.password.error", new Object[] { e.getMessage() }));

@@ -17,11 +17,10 @@ import com.inverter.auth.service.MessageService;
 import com.inverter.auth.service.UserService;
 import com.inverter.auth.util.Response;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("api/auth/user")
+@RequestMapping("/api/auth/user")
 public class UserController {
 
 	private UserService service;
@@ -32,8 +31,8 @@ public class UserController {
 		this.msg = msg;
 	}
 
-	@PostMapping
-	public ResponseEntity<Response<UserDTO>> create(@Valid @RequestBody UserDTO userDto, HttpServletRequest req, BindingResult result) {
+	@PostMapping("/create")
+	public ResponseEntity<Response<UserDTO>> create(@Valid @RequestBody UserDTO userDto, BindingResult result) {
 		Response<UserDTO> resp = new Response<>();
 
 		if (result.hasErrors()) {
@@ -57,7 +56,7 @@ public class UserController {
         try {
             User user = service.activationAcount(token);
             
-            return ResponseEntity.ok(String.format(msg.get("template.email.activation.account.sucess"), user.getUsername()));
+            return ResponseEntity.ok(msg.get("template.email.activation.account.sucess", new String[] {user.getUsername()}));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -24,6 +24,9 @@ public class EmailServiceImpl implements EmailService {
     private TemplateEngine templateEngine;
     private MessageService msg;
     
+    @Value("${locale.language.tag}")
+	private String lang;
+    
     @Value("${spring.mail.username}")
     private String fromEmail;
     
@@ -56,10 +59,10 @@ public class EmailServiceImpl implements EmailService {
             context.setVariable("activationLink", baseUrl + "/api/auth/user/activate?lang=" + locale.toLanguageTag() + "&token=" + token);
             context.setVariable("userName", to);
             
-            var validFor = msg.get("template.email.activation.account.text.valid.link", new Object[]{expirationActivation, getLabelTime(expirationActivation)});
+            var validFor = msg.get("template.email.activation.account.text.valid.link", new Object[]{getLabelTime(expirationActivation)});
             context.setVariable("validFor", validFor);
             
-            String content = templateEngine.process("/email/activation-email", context);
+            String content = templateEngine.process("email/activation-email", context);
             helper.setText(content, true);
             
             mailSender.send(message);
@@ -80,10 +83,10 @@ public class EmailServiceImpl implements EmailService {
             helper.setSubject(msg.get("user.auth.email.reset.password.title"));
             
             Context context = new Context(locale);
-            context.setVariable("resetPassword", baseUrl + "/api/auth/user/reset-password-ui?lang=" + locale.toLanguageTag() + "&token=" + token);
+            context.setVariable("resetPassword", baseUrl + "/api/auth/reset/reset-password-ui?lang=" + locale.toLanguageTag() + "&token=" + token);
             context.setVariable("userName", to);
             
-            var validFor = msg.get("template.email.reset.password.account.text.valid.link", new Object[]{expirationResetPassword, getLabelTime(expirationResetPassword)});
+            var validFor = msg.get("template.email.reset.password.account.text.valid.link", new Object[]{getLabelTime(expirationResetPassword)});
             context.setVariable("validFor", validFor);
             
             String content = templateEngine.process("email/reset-password-email", context);
@@ -95,13 +98,20 @@ public class EmailServiceImpl implements EmailService {
         	 throw new SecurityException(msg.get("user.auth.email.reset.password.send.error", new Object[]{e.getMessage()}));
         }
     }
-
-	private String getLabelTime(Integer label) {
-		if (label%60 == 0 && label/60 == 1 ) {
-			return msg.get("general.key.hour");
-		} else if (label%60 == 0 && label/60 > 1 ) {
-			return  msg.get("general.key.hours");
-		} 
-		return  msg.get("general.key.min");
-	}
+    
+    private String getLabelTime(Integer minutes) {
+        if (minutes == null || minutes < 0) {
+            return msg.get("time.zero");
+        }
+        
+        int hours = minutes / 60;
+        int remainingMinutes = minutes % 60;
+        
+        if (minutes < 60) {
+            return msg.get("time.minutes", new Object[]{ minutes });
+        } else if (remainingMinutes == 0) {
+            return msg.get("time.hours", new Object[]{ hours });
+        } 
+        return msg.get("time.hours.minutes", new Object[]{ hours, remainingMinutes });
+    }   
 }

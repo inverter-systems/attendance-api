@@ -1,5 +1,7 @@
 package com.inverter.auth;
 
+import static com.inverter.auth.config.SecurityConfiguration.getEndpointsWithAutenticationNotReuired;
+
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -38,8 +40,9 @@ public class FilterToken extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
 	        throws ServletException, IOException {
+		var path = req.getRequestURI();
 		
-		if (req.getRequestURI().equals("/api/auth")) {
+		if (getEndpointsWithAutenticationNotReuired().anyMatch(str -> str.equalsIgnoreCase(path))) {
 			chain.doFilter(req, res);
 			return;
 		}
