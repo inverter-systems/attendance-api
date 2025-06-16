@@ -3,24 +3,18 @@ package com.inverter.auth;
 import static com.inverter.auth.config.SecurityConfiguration.getEndpointsWithAutenticationNotReuired;
 
 import java.io.IOException;
-import java.util.Arrays;
 
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.inverter.auth.enums.IssueEnum;
-import com.inverter.auth.repository.UserRepository;
 import com.inverter.auth.service.MessageService;
 import com.inverter.auth.service.TokenService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -28,12 +22,10 @@ import jakarta.servlet.http.HttpServletResponse;
 public class FilterToken extends OncePerRequestFilter {
 
 	private TokenService tokenService;
-	private UserRepository userRepo;
 	private MessageService msg;
 
-	public FilterToken(TokenService tokenService, UserRepository userRepo, MessageService msg) {
+	public FilterToken(TokenService tokenService, MessageService msg) {
 		this.tokenService = tokenService;
-		this.userRepo = userRepo;
 		this.msg = msg;
 	}
 
@@ -53,11 +45,8 @@ public class FilterToken extends OncePerRequestFilter {
 	    final String TOKEN_SIGNATUE_ERROR_MSG = msg.get("user.auth.token.error.signature");
 
 	    try {
-	        String token = extractTokenFromCookies(req.getCookies());
-
-	        if (!token.isEmpty()) {
-	            authenticateRequest(token, req);
-	        }
+	       
+	    	tokenService.authenticateRequest(req);
 
 	    } catch (TokenExpiredException e) {
 	        handleTokenException(req, ERROR_LABEL_ATTRIBUTE, String.format(TOKEN_EXPIRED_ERROR_MSG, e.getExpiredOn()), e);
@@ -70,26 +59,6 @@ public class FilterToken extends OncePerRequestFilter {
 	    }
 
 	    chain.doFilter(req, res);
-	}
-
-	private String extractTokenFromCookies(Cookie[] cookies) {
-	    if (cookies == null) return "";
-	    return Arrays.stream(cookies)
-	            .filter(c -> "access_token".equals(c.getName()))
-	            .map(Cookie::getValue)
-	            .findFirst()
-	            .orElse("");
-	}
-
-	private void authenticateRequest(String token, HttpServletRequest req) {
-	    String subject = tokenService.getSubject(token, IssueEnum.ISSUE);
-	    var user = userRepo.findByUsername(subject);
-
-	    user.ifPresent(u -> {
-	        var authentication = new UsernamePasswordAuthenticationToken(u, null, u.getAuthorities());
-	        SecurityContextHolder.getContext().setAuthentication(authentication);
-	        req.setAttribute("authentication", "authenticated");
-	    });
 	}
 
 	private void handleTokenException(HttpServletRequest req, String attr, String message, Exception e) throws ServletException {

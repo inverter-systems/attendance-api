@@ -3,18 +3,28 @@ package com.inverter.auth.service.impl;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.inverter.auth.entity.User;
 import com.inverter.auth.enums.IssueEnum;
+import com.inverter.auth.repository.UserRepository;
 import com.inverter.auth.service.TokenService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Service
 public class TokenServiceImpl implements TokenService {
+	
+	private UserRepository repo;
 	
 	@Value("${jwt.expiration.user.min}")
 	private Integer expirationUser;
@@ -31,7 +41,11 @@ public class TokenServiceImpl implements TokenService {
 	@Value("${zone.off.set}")
 	private String zoneOffSet;
 	
-    public String buildUserToken(User usuario) {
+    public TokenServiceImpl(UserRepository repo) {
+		this.repo = repo;
+	}
+
+	public String buildUserToken(User usuario) {
     	var expiration = ZonedDateTime.now(ZoneId.of(zoneOffSet)).plusMinutes(expirationUser).toInstant();
         return JWT.create()
                 .withIssuer(IssueEnum.ISSUE.getDesc())
@@ -73,4 +87,32 @@ public class TokenServiceImpl implements TokenService {
 				.withIssuer(issue.getDesc())
 				.build().verify(token).getExpiresAtAsInstant();
 	}
+	
+	public String extractTokenFromCookies(Cookie[] cookies) {
+	    if (cookies == null) return "";
+	    return Arrays.stream(cookies)
+	            .filter(c -> "access_token".equals(c.getName()))
+	            .map(Cookie::getValue)
+	            .findFirst()
+	            .orElse("");
+	}
+	
+	public User authenticateRequest(HttpServletRequest req) {
+		String token = extractTokenFromCookies(req.getCookies());
+		Optional<User> user = Optional.empty();
+				
+		if (!token.isEmpty()) {
+			String subject = getSubject(token, IssueEnum.ISSUE);
+			user = repo.findByUsername(subject);
+		}	
+
+	    return user.map(u -> {
+	        var authentication = new UsernamePasswordAuthenticationToken(u, null, u.getAuthorities());
+	        SecurityContextHolder.getContext().setAuthentication(authentication);
+	        req.setAttribute("authentication", "authenticated");
+	        return u;
+	    }).orElse(null);
+	}
+
+	
 }

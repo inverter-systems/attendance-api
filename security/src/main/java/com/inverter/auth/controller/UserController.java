@@ -42,7 +42,7 @@ public class UserController {
 		
 		try {
 			User user = service.create(userDto.buildUser());
-			resp.setData(userDto.buildUserDTO(user));
+			resp.setData(UserDTO.buildUserDTO(user));
 			
 		} catch (Exception e) {
 			resp.getErrors().add(e.getMessage());

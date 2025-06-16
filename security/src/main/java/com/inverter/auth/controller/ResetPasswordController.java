@@ -25,7 +25,7 @@ public class ResetPasswordController {
 	}
 	
 	@GetMapping("/reset-password-ui")
-    public String exibirTelaReset(@RequestParam String token, Model model) {
+    public String showResetPage(@RequestParam String token, Model model) {
         model.addAttribute("token", token);
         return "reset-password";
     }

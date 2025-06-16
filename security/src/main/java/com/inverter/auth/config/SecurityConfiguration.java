@@ -26,13 +26,15 @@ public class SecurityConfiguration {
 	 static final String [] ENDPOINTS_WITH_AUTHENTICATION_NOT_REQUIRED = {
 			 "/favicon.ico",
 			 "/api/auth",
+			 "/api/auth/validate",
+			 "/api/auth/logout",
 			 "/api/auth/user/create", 
 			 "/api/auth/user/activate", 
 			 "/api/auth/user/forgot-password", 
 			 "/api/auth/reset/reset-password",
 			 "/api/auth/reset/reset-password-ui"};
 
-     static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {"/users/test"};
+     static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {"/api/person/**"};
 
      static final String [] ENDPOINTS_CUSTOMER = {"/users/test/customer"};
 

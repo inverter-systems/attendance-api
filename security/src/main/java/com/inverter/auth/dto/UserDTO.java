@@ -1,8 +1,12 @@
 package com.inverter.auth.dto;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.inverter.auth.entity.Role;
 import com.inverter.auth.entity.User;
 
 import jakarta.validation.constraints.Email;
@@ -35,6 +39,11 @@ public class UserDTO {
 	@NotNull(message = "{user.auth.user.error.invalid.password.null}")
 	private String password;
 	
+	private List<Role> roles; 
+	private Boolean active;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+	
 	public User buildUser() {
 		return User.builder()
 				.id(this.id)
@@ -44,11 +53,15 @@ public class UserDTO {
 				.build();
 	}
 	
-	public UserDTO buildUserDTO(User user) {
+	public static UserDTO buildUserDTO(User user) {
 		return UserDTO.builder()
 				.id(user.getId())
 				.email(user.getEmail())
 				.username(user.getUsername())
+				.roles(user.getRoles())
+				.active(user.getActive())
+				.createdAt(user.getCreatedAt())
+				.updatedAt(user.getUpdatedAt())
 				.build();
 	}
 }
