@@ -14,7 +14,7 @@ public class CpfValidator implements ConstraintValidator<Cpf, String> {
         }
 
         // Remove caracteres não numéricos
-        ssn = ssn.replaceAll("[^0-9]", "");
+        ssn = ssn.replaceAll("\\D", "");
         
         if (ssn.length() == 9) {
         	return isValidSsn(ssn);
@@ -54,6 +54,25 @@ public class CpfValidator implements ConstraintValidator<Cpf, String> {
 	}
 
 	private boolean isValidSsn(String ssn) {
-    	return ssn.length() == 9;
+        if (ssn == null || ssn.length() != 9) {
+            return false;
+        }
+
+        String area = ssn.substring(0, 3);
+        String group = ssn.substring(3, 5);
+        String serial = ssn.substring(5, 9);
+
+        // Regra 1: O número da área não pode ser 000, 666 ou 900-999
+        if (area.equals("000") || area.equals("666") || (Integer.parseInt(area) >= 900)) {
+            return false;
+        }
+
+        // Regra 2: O número do grupo não pode ser 00
+        if (group.equals("00")) {
+            return false;
+        }
+
+        // Regra 3: O número de série não pode ser 0000
+        return !serial.equals("0000");
     }
 }

@@ -18,12 +18,14 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "ADDRESSES")
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Address implements Serializable {
 	
     private static final long serialVersionUID = 5652944796668528723L;

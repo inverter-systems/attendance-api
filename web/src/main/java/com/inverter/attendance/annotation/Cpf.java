@@ -6,13 +6,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator;
+import com.inverter.attendance.annotation.impl.CpfValidator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
 @Documented
-@Constraint(validatedBy = CPFValidator.class) // Classe que implementa a validação
+@Constraint(validatedBy = CpfValidator.class) // Classe que implementa a validação
 @Target({ElementType.FIELD, ElementType.PARAMETER}) // Onde pode ser aplicada
 @Retention(RetentionPolicy.RUNTIME) // Disponível em runtime
 public @interface Cpf {

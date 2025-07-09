@@ -34,7 +34,10 @@ public class SecurityConfiguration {
 			 "/api/auth/reset/reset-password",
 			 "/api/auth/reset/reset-password-ui"};
 
-     static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {"/api/person/**"};
+     static final String [] ENDPOINTS_WITH_AUTHENTICATION_REQUIRED = {
+    		 "/api/person/natural",
+    		 "/api/person/legal",
+    		 "/api/person/fully-registered"};
 
      static final String [] ENDPOINTS_CUSTOMER = {"/users/test/customer"};
 
